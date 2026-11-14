@@ -64,9 +64,9 @@ export default function Footer() {
       >
         DEVOBRA
       </p>
-
       <p className="mt-6 text-center font-mono text-[11px] text-dim">
-        © 2026 <span className="text-muted">Mark Joemarie Obra</span>. Built with Next.js &amp; Tailwind CSS.
+        © 2026 <span className="text-muted">Mark Joemarie Obra</span>. Still learning.{" "}
+        <span className="text-accent">Still building.</span>
       </p>
     </footer>
   );
