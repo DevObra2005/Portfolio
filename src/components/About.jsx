@@ -59,7 +59,7 @@ export default function About() {
               alt="Mark Joemarie Obra"
               fill
               sizes="250px"
-              className="object-cover grayscale transition duration-500 hover:grayscale-0"
+              className="object-cover transition duration-500 hover:scale-105"
             />
           </div>
         </div>

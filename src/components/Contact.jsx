@@ -1,4 +1,5 @@
 import { Mail, MapPin } from "lucide-react";
+import EmailCard from "@/components/EmailCard";
 import SectionHeading from "@/components/SectionHeading";
 import ContactForm from "@/components/ContactForm";
 import { email, socials } from "@/data/socials";
@@ -16,15 +17,7 @@ export default function Contact() {
 
       <div className="grid gap-6 md:grid-cols-[0.9fr_1.1fr]">
         <div className="flex flex-col gap-3.5">
-          <a href={`mailto:${email}`} className="flex items-center gap-3.5 rounded-2xl border border-line bg-card p-4.5 transition hover:border-accent">
-            <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-line">
-              <Mail size={18} />
-            </span>
-            <div>
-              <p className="text-[11px] tracking-[0.12em] text-dim uppercase">Email</p>
-              <p className="text-sm break-all">{email}</p>
-            </div>
-          </a>
+          <EmailCard email={email} />
 
           <div className="flex items-center gap-3.5 rounded-2xl border border-line bg-card p-4.5">
             <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-line">
