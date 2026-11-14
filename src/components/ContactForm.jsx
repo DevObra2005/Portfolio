@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CircleAlert, CircleCheck, LoaderCircle, Send } from "lucide-react";
+import { CircleCheck, Send } from "lucide-react";
+import { email as myEmail } from "@/data/socials";
 
 const initialForm = { name: "", email: "", subject: "", message: "" };
 
@@ -10,34 +11,42 @@ const inputClass = "w-full rounded-xl border border-line bg-background px-3.5 py
 
 export default function ContactForm() {
   const [form, setForm] = useState(initialForm);
-  const [status, setStatus] = useState("idle");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [opened, setOpened] = useState(null); // ← BAGO: null | "app" | "gmail"
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault();
-    setStatus("sending");
-    setErrorMessage("");
 
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
+    const subject = form.subject.trim() || `Portfolio inquiry from ${form.name}`;
+    const body = `Hi Mark,\n\n${form.message}\n\n— ${form.name}\n${form.email}`;
 
-      if (!res.ok) throw new Error(data.error);
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent); // ← BAGO
 
-      setStatus("sent");
-      setForm(initialForm);
-    } catch (err) {
-      setStatus("error");
-      setErrorMessage(err.message || "Something went wrong. Please try again.");
+    if (isMobile) {
+      // ← BAGO: sa phone, buksan ang email app (Gmail app sa Android, Mail sa iPhone)
+      const mailtoUrl =
+        `mailto:${myEmail}` +
+        `?subject=${encodeURIComponent(subject)}` +
+        `&body=${encodeURIComponent(body)}`;
+
+      window.location.href = mailtoUrl;
+      setOpened("app");
+    } else {
+      // sa laptop, buksan ang Gmail sa bagong tab
+      const gmailUrl =
+        `https://mail.google.com/mail/?view=cm&fs=1` +
+        `&to=${encodeURIComponent(myEmail)}` +
+        `&su=${encodeURIComponent(subject)}` +
+        `&body=${encodeURIComponent(body)}`;
+
+      window.open(gmailUrl, "_blank", "noopener,noreferrer");
+      setOpened("gmail");
     }
+
+    setForm(initialForm);
   }
 
   return (
@@ -65,29 +74,19 @@ export default function ContactForm() {
 
       <button
         type="submit"
-        disabled={status === "sending"}
-        className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-foreground text-sm font-semibold text-background transition hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+        className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-foreground text-sm font-semibold text-background transition hover:-translate-y-0.5 hover:shadow-lg"
       >
-        {status === "sending" ? (
-          <>
-            <LoaderCircle size={16} className="animate-spin" /> Sending...
-          </>
-        ) : (
-          <>
-            <Send size={16} /> Send Message
-          </>
-        )}
+        <Send size={16} /> Send Message {/* ← BAGO: hindi na "via Gmail" kasi app ang bubukas sa phone */}
       </button>
 
       <p aria-live="polite" className="min-h-5 text-sm">
-        {status === "sent" && (
+        {opened && (
           <span className="flex items-center gap-1.5 text-accent">
-            <CircleCheck size={16} /> Message sent! I'll get back to you soon.
-          </span>
-        )}
-        {status === "error" && (
-          <span className="flex items-center gap-1.5 text-red-500">
-            <CircleAlert size={16} /> {errorMessage}
+            <CircleCheck size={16} />
+            {/* ← BAGO: ibang mensahe depende kung saan bumukas */}
+            {opened === "app"
+              ? "Your email app is open — just hit Send there."
+              : "Gmail opened in a new tab — just hit Send there."}
           </span>
         )}
       </p>
