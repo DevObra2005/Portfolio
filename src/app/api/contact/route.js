@@ -1,7 +1,5 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request) {
   const { name, email, subject, message } = await request.json();
 
@@ -11,6 +9,19 @@ export async function POST(request) {
       { status: 400 }
     );
   }
+
+  // ← BAGO: kunin ang key at gawin ang Resend client DITO, sa loob ng function
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.error("Missing RESEND_API_KEY environment variable");
+    return Response.json(
+      { error: "Email service is not configured yet." },
+      { status: 500 }
+    );
+  }
+
+  const resend = new Resend(apiKey);
+  // ← hanggang dito ang bago
 
   const { error } = await resend.emails.send({
     from: "Portfolio Contact <onboarding@resend.dev>",
