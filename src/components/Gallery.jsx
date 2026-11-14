@@ -9,11 +9,11 @@ export default function Gallery() {
     <section id="gallery" className="scroll-mt-4 py-20">
       <div className="mx-auto max-w-275 px-5">
         <SectionHeading
-          number="04"
+          number="03"
           label="GALLERY"
           title="Behind the"
           accent="Code"
-          subtitle="Moments from school, events and projects in progress. Swipe, hover or tap to explore."
+          subtitle="The moments behind the code."
         />
       </div>
 

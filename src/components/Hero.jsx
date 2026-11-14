@@ -1,7 +1,8 @@
 import { ArrowUpRight, Mail } from "lucide-react";
 import { socials } from "@/data/socials";
 
-import CodeWindow from "@/components/CodeWindow";
+// ngayon:
+import WhatIBuild from "@/components/WhatIBuild";
 
 export default function Hero() {
 
@@ -16,20 +17,27 @@ export default function Hero() {
           Available for part-time work
         </span>
 
-        <h1 className="mt-6 mb-4 font-display text-[clamp(46px,7.4vw,76px)] leading-none font-extrabold tracking-tight">
-          Web
-          <span className="block text-muted">Developer</span>
+        <h1 className="mt-6 font-display text-[clamp(40px,6vw,64px)] leading-none font-extrabold tracking-tight">
+          Mark Joemarie
+          <span className="block text-muted">Obra</span>
         </h1>
+
+        <p className="mt-4 font-mono text-lg font-medium">
+          <span className="text-accent">&gt;</span> Software Developer
+          <span className="animate-blink text-accent">_</span>
+        </p>
+        <p className="mt-1 mb-5 text-sm font-medium text-muted">
+          Web Aplications · Mobile Aplications
+        </p>
+
         <p className="mb-7 max-w-[520px] text-[15px] text-muted">
-          I'm <strong className="font-semibold text-foreground">Mark Joemarie Obra</strong>, a
-          fourth-year IT student specializing in web development. I build full-stack web apps
-          with Laravel and React, and I shipped a Unity training simulation for Android as my
-          capstone.
+          I&apos;m a fourth-year IT student who builds web and mobile apps — full-stack systems
+          with Laravel and React, and Android apps
         </p>
 
         <div className="flex flex-wrap gap-2.5">
           <a
-            href="#portfolio"
+            href="#projects"
             className="inline-flex min-h-[46px] items-center gap-2 rounded-xl border border-foreground bg-foreground px-5 text-sm font-semibold text-background transition hover:-translate-y-0.5"
           >
             View Projects <ArrowUpRight size={16} />
@@ -56,9 +64,8 @@ export default function Hero() {
             </a>
           ))}
         </div>
-        {/* Chunk B, C, D, E dito */}
       </div>
-     <CodeWindow />
+     <WhatIBuild />
     </section>
   );
 }

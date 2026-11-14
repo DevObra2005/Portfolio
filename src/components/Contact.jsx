@@ -8,7 +8,7 @@ export default function Contact() {
   return (
     <section id="contact" className="mx-auto max-w-275 scroll-mt-4 px-5 py-20">
       <SectionHeading
-        number="05"
+        number="04"
         label="CONTACT"
         title="Get In"
         accent="Touch"

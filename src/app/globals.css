@@ -72,3 +72,67 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+
+
+/* ---------- What I Build (Hero card) ---------- */
+@keyframes wib-progress { from { width: 0; } to { width: 100%; } }
+@keyframes wib-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes wib-build {
+  0%, 8% { opacity: 0; transform: scale(.9); }
+  18%, 85% { opacity: 1; transform: none; }
+  100% { opacity: 0; }
+}
+@keyframes wib-cursor {
+  0% { transform: translate(200px, 40px); }
+  35% { transform: translate(36px, 104px); }
+  45% { transform: translate(36px, 104px) scale(.85); }
+  55%, 100% { transform: translate(36px, 104px); }
+}
+@keyframes wib-tap {
+  0%, 40% { opacity: 0; transform: scale(.3); }
+  44% { opacity: .25; transform: scale(1); }
+  52%, 100% { opacity: 0; transform: scale(1.6); }
+}
+@keyframes wib-req {
+  0% { left: 72px; opacity: 0; } 5% { opacity: 1; }
+  40% { left: calc(100% - 84px); opacity: 1; }
+  45%, 100% { left: calc(100% - 84px); opacity: 0; }
+}
+@keyframes wib-res {
+  0%, 50% { left: calc(100% - 84px); opacity: 0; } 55% { opacity: 1; }
+  90% { left: 72px; opacity: 1; }
+  95%, 100% { left: 72px; opacity: 0; }
+}
+@keyframes wib-label-req { 0%, 5% { opacity: 0; } 10%, 40% { opacity: 1; } 48%, 100% { opacity: 0; } }
+@keyframes wib-label-res { 0%, 52% { opacity: 0; } 58%, 90% { opacity: 1; } 96%, 100% { opacity: 0; } }
+
+.wib-progress { animation: wib-progress 4.5s linear forwards; }
+.wib-card:hover .wib-progress { animation-play-state: paused; }
+.wib-in { animation: wib-in .45s cubic-bezier(.2, .8, .2, 1); }
+.wib-build { opacity: 0; animation: wib-build 4.5s ease infinite; }
+.wib-cursor { animation: wib-cursor 4.5s ease infinite; }
+.wib-tap { animation: wib-tap 4.5s ease infinite; }
+.wib-req { animation: wib-req 4.5s ease-in-out infinite; }
+.wib-res { animation: wib-res 4.5s ease-in-out infinite; }
+.wib-label-req { animation: wib-label-req 4.5s ease infinite; }
+.wib-label-res { animation: wib-label-res 4.5s ease infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wib-build, .wib-cursor, .wib-tap, .wib-req, .wib-res,
+  .wib-label-req, .wib-label-res, .wib-in { animation: none; opacity: 1; }
+}
+
+
+
+/* ---------- Tech stack marquee ---------- */
+@keyframes stack-scroll {
+  to { transform: translateX(-50%); }
+}
+.stack-row { animation: stack-scroll 32s linear infinite; }
+.stack-row.reverse { animation-direction: reverse; animation-duration: 36s; }
+.stack-track:hover .stack-row { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stack-row { animation: none; }
+}
