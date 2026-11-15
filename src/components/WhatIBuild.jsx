@@ -115,7 +115,14 @@ export default function WhatIBuild() {
   }, [active]);
 
   return (
-    <div className="wib-card w-full max-w-105 rounded-3xl border border-line bg-card p-4.5 shadow-[0_50px_90px_-60px_rgba(10,10,10,.45)]">
+    <div className="wib-card w-full max-w-100 rounded-3xl border border-line bg-card p-4.5 shadow-[0_50px_90px_-60px_rgba(10,10,10,.45)]">
+      {/* Header ng card */}
+      <div className="mb-1 flex items-center justify-between px-0.5">
+        <span className="font-mono text-xs tracking-[0.14em] text-muted">WHAT I BUILD</span>
+        <span className="font-mono text-xs text-dim">
+          {String(active + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}
+        </span>
+      </div>
       {/* Progress bars */}
       <div className="grid grid-cols-3 gap-2">
         {services.map((s, i) => (

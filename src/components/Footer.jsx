@@ -65,7 +65,7 @@ export default function Footer() {
         DEVOBRA
       </p>
       <p className="mt-6 text-center font-mono text-[11px] text-dim">
-        © 2026 <span className="text-muted">Mark Joemarie Obra</span>. Still learning.{" "}
+        © 2026 <span className="text-muted">Mark Joemarie Obra</span>. <br /> Still learning.{" "}
         <span className="text-accent">Still building.</span>
       </p>
     </footer>
