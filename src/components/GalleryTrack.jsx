@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { gallery } from "@/data/gallery";
 
@@ -10,8 +10,20 @@ export default function GalleryTrack() {
   const scrollerRef = useRef(null);
   const pausedRef = useRef(false);
   const resumeTimer = useRef(null);
-    const dragRef = useRef({ active: false, startX: 0, startScroll: 0 });
+  const dragRef = useRef({ active: false, startX: 0, startScroll: 0 });
+  const movedRef = useRef(false); // true kapag nag-drag (hindi click)
   const loop = [...gallery, ...gallery, ...gallery, ...gallery];
+
+  // Aling litrato ang naka-"open" (may kulay + caption) — pinipindot sa phone
+  const [activeIndex, setActiveIndex] = useState(null);
+  const activeRef = useRef(null);
+
+  // Habang may naka-open na litrato, huminto ang gallery para mabasa
+  useEffect(() => {
+    activeRef.current = activeIndex;
+    if (activeIndex !== null) pause();
+    else resumeLater();
+  }, [activeIndex]);
 
   useEffect(() => {
     const el = scrollerRef.current;
@@ -68,13 +80,20 @@ export default function GalleryTrack() {
   function resumeLater(ms = 2000) {
     clearTimeout(resumeTimer.current);
     resumeTimer.current = setTimeout(() => {
-      pausedRef.current = false;
+      // Huwag tumakbo ulit habang may naka-open na litrato
+      if (activeRef.current === null) pausedRef.current = false;
     }, ms);
+  }
+
+  function handleSelect(i) {
+    if (movedRef.current) return; // drag ito, hindi pindot
+    setActiveIndex((current) => (current === i ? null : i));
   }
 
   function handlePointerDown(e) {
     if (e.pointerType !== "mouse") return;
     const el = scrollerRef.current;
+    movedRef.current = false;
     dragRef.current = { active: true, startX: e.clientX, startScroll: el.scrollLeft };
     el.setPointerCapture(e.pointerId);
     pause();
@@ -83,6 +102,8 @@ export default function GalleryTrack() {
   function handlePointerMove(e) {
     const drag = dragRef.current;
     if (!drag.active) return;
+
+    if (Math.abs(e.clientX - drag.startX) > 5) movedRef.current = true;
 
     const el = scrollerRef.current;
     const half = el.scrollWidth / 2;
@@ -105,13 +126,10 @@ export default function GalleryTrack() {
   }
 
   return (
-    // Ring sa wrapper: naka-mask ang scroller kaya hindi kita ang sarili nitong outline
-    <div className="rounded-2xl has-[:focus-visible]:outline-2 has-[:focus-visible]:-outline-offset-2 has-[:focus-visible]:outline-accent">
       <div
         ref={scrollerRef}
-        tabIndex={0}
         role="region"
-        aria-label="Gallery photos, scroll sideways"
+        aria-label="Gallery photos"
         onPointerEnter={(e) => e.pointerType === "mouse" && pause()}
         onPointerLeave={(e) => e.pointerType === "mouse" && resumeLater(300)}
         onPointerDown={handlePointerDown}
@@ -123,16 +141,22 @@ export default function GalleryTrack() {
         onTouchEnd={() => resumeLater()}
         onFocus={pause}
         onBlur={() => resumeLater()}
-        className="group/track flex cursor-grab overflow-x-auto select-none [scrollbar-width:none] [mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)] focus-visible:outline-none active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
+        className="flex cursor-grab overflow-x-auto select-none [scrollbar-width:none] [mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)] active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
       >
         {loop.map((photo, i) => {
           const isCopy = i >= gallery.length;
+          const isActive = activeIndex === i;
 
           return (
-            <figure
+            // Pindot (phone) / click: magkakulay + lalabas ang caption. Hover sa desktop, focus sa keyboard.
+            <button
               key={i}
+              type="button"
+              onClick={() => handleSelect(i)}
+              aria-pressed={isActive}
               aria-hidden={isCopy || undefined}
-              className="group relative mr-4 shrink-0 overflow-hidden rounded-2xl border border-line"
+              tabIndex={isCopy ? -1 : 0}
+              className="group relative mr-4 shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-line focus-visible:-outline-offset-4"
             >
               <Image
                 src={photo.image}
@@ -140,19 +164,23 @@ export default function GalleryTrack() {
                 placeholder="blur"
                 sizes="320px"
                 draggable={false}
-                className="h-44 w-auto grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0 group-focus-visible/track:grayscale-0 sm:h-56"
+                className={`h-44 w-auto transition duration-700 group-focus-visible:grayscale-0 sm:h-56 ${
+                  isActive ? "scale-105 grayscale-0" : "grayscale group-hover:scale-105 group-hover:grayscale-0"
+                }`}
               />
-              {/* Caption: hover sa mouse, laging kita sa touch, kita rin kapag naka-focus ang track */}
-              <figcaption className="absolute inset-x-0 bottom-0 translate-y-full bg-linear-to-t from-black/80 to-transparent p-3 text-left text-white transition duration-400 group-hover:translate-y-0 group-focus-visible/track:translate-y-0 [@media(hover:none)]:translate-y-0">
+              <span
+                className={`absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 to-transparent p-3 text-left text-white transition duration-400 group-focus-visible:translate-y-0 ${
+                  isActive ? "translate-y-0" : "translate-y-full group-hover:translate-y-0"
+                }`}
+              >
                 <span className="block text-sm font-semibold">{photo.title}</span>
                 <span className="block font-mono text-[11px] opacity-75">
                   {photo.tag} · {photo.date}
                 </span>
-              </figcaption>
-            </figure>
+              </span>
+            </button>
           );
         })}
       </div>
-    </div>
   );
 }
