@@ -31,8 +31,8 @@ export default function Hero() {
         </p>
 
         <p className="mb-7 max-w-[520px] text-[15px] text-muted">
-          I&apos;m a fourth-year IT student who builds web and mobile apps — full-stack systems
-          with Laravel and React, and Android apps
+          I&apos;m an IT student who builds full-stack web applications with Laravel and React,
+          with hands-on experience in Android development.
         </p>
 
         <div className="flex flex-wrap gap-2.5">
