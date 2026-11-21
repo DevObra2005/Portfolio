@@ -20,7 +20,7 @@ const jetbrains = JetBrains_Mono({
 
 export const metadata = {
   title: "Mark Joemarie Obra",
-  description: "Web developer portfolio of Mark Joemarie Obra — Laravel, React, Next.js.",
+  description: "Software developer portfolio of Mark Joemarie Obra — Laravel, React, Next.js.",
 };
 
 export default function RootLayout({ children }) {

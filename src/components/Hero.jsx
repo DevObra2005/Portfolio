@@ -27,7 +27,7 @@ export default function Hero() {
           <span className="animate-blink text-accent">_</span>
         </p>
         <p className="mt-1 mb-5 text-sm font-medium text-muted">
-          Web Aplications · Mobile Aplications
+          Web Applications · Mobile Applications
         </p>
 
         <p className="mb-7 max-w-[520px] text-[15px] text-muted">

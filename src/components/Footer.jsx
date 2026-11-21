@@ -15,7 +15,7 @@ export default function Footer() {
               <span className="text-accent">_</span>
             </span>
           </a>
-          <p className="mt-3 text-sm text-muted">Mark Joemarie Obra · Web Developer</p>
+          <p className="mt-3 text-sm text-muted">Mark Joemarie Obra · Software Developer</p>
           <p className="mt-1 flex items-center gap-1.5 text-sm text-dim">
             <MapPin size={14} /> Pangasinan, Philippines
           </p>
