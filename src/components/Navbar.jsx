@@ -11,10 +11,26 @@ export default function Navbar() {
   const [activeId, setActiveId] = useState("home");
   const [activePill, setActivePill] = useState({ left: 0, width: 0, visible: false });
   const [hoverPill, setHoverPill] = useState({ left: 0, width: 0, visible: false });
+  // Unang pwesto ng pill: walang slide; may transition lang pagkatapos
+  const [pillAnimated, setPillAnimated] = useState(false);
 
   const linkRefs = useRef({});
   const activeIdRef = useRef("home");
   const hoveringRef = useRef(false);
+  const menuButtonRef = useRef(null);
+
+  // Escape closes the mobile menu and puts focus back on its button
+  useEffect(() => {
+    if (!open) return;
+    function handleKey(e) {
+      if (e.key === "Escape") {
+        setOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    }
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [open]);
 
   function measure(id) {
     const el = linkRefs.current[id];
@@ -26,7 +42,10 @@ export default function Navbar() {
       activeIdRef.current = id;
       setActiveId(id);
       const pos = measure(id);
-      if (pos) setActivePill(pos);
+      if (pos) {
+        setActivePill(pos);
+        requestAnimationFrame(() => setPillAnimated(true));
+      }
     }
 
     const sections = links
@@ -88,7 +107,9 @@ export default function Navbar() {
         />
         <span
           aria-hidden="true"
-          className="absolute top-1 bottom-1 rounded-full bg-foreground transition-all duration-500 ease-out"
+          className={`absolute top-1 bottom-1 rounded-full bg-foreground ${
+            pillAnimated ? "transition-[left,width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" : ""
+          }`}
           style={{ left: activePill.left, width: activePill.width, opacity: activePill.visible ? 1 : 0 }}
         />
 
@@ -116,8 +137,11 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
                 <ThemeToggle />
                 <button
+                ref={menuButtonRef}
                 onClick={() => setOpen(!open)}
-                aria-label="Toggle menu"
+                aria-label="Menu"
+                aria-expanded={open}
+                aria-controls="mobile-menu"
                 className="grid size-10 place-items-center rounded-full border border-line md:hidden"
                 >
                 {open ? <X size={18} /> : <Menu size={18} />}
@@ -126,7 +150,7 @@ export default function Navbar() {
     </nav>
 
           {open && (
-        <div className="fixed inset-x-3 top-20 z-40 flex flex-col rounded-2xl border border-line bg-background p-2 shadow-xl md:hidden">
+        <div id="mobile-menu" className="fixed inset-x-3 top-20 z-40 flex flex-col rounded-2xl border border-line bg-background p-2 shadow-xl md:hidden">
           {links.map((link) => (
             <a
               key={link.href}

@@ -49,7 +49,7 @@ export default function Footer() {
                   aria-label={label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="grid size-10 place-items-center rounded-[10px] border border-line text-muted transition hover:border-accent hover:bg-accent hover:text-white"
+                  className="grid size-10 place-items-center rounded-[10px] border border-line text-muted transition hover:border-accent hover:bg-accent hover:text-background"
                 >
                   <Icon size={16} />
                 </a>

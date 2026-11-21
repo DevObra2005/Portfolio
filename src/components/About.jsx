@@ -2,6 +2,7 @@ import { Code, Download, GraduationCap, MapPin } from "lucide-react";
 import Image from "next/image";
 import SectionHeading from "@/components/SectionHeading";
 import TechMarquee from "@/components/TechMarquee";
+import MarqueeToggle from "@/components/MarqueeToggle";
 import { stackTop, stackBottom } from "@/data/stack";
 
 /* Maliit na label na may linya — gagamitin sa EDUCATION at TECH STACK */
@@ -10,7 +11,7 @@ function SubLabel({ children, right }) {
     <div className="mt-18 mb-5 flex items-center gap-3.5">
       <span className="font-mono text-xs tracking-[0.14em] text-accent">{children}</span>
       <span className="h-px flex-1 bg-line" />
-      {right && <span className="font-mono text-xs text-muted">{right}</span>}
+      {right && <div className="flex items-center gap-2.5 font-mono text-xs text-muted">{right}</div>}
     </div>
   );
 }
@@ -71,10 +72,10 @@ export default function About() {
 
         <div className="relative order-first mx-auto aspect-square w-[min(250px,64vw)] md:order-none">
           {/* 1. Glow */}
-          <div className="absolute -inset-6 animate-pulse rounded-full bg-accent/25 blur-2xl" />
+          <div className="absolute -inset-6 rounded-full bg-accent/25 blur-2xl motion-safe:animate-pulse" />
 
           {/* 2. Gradient ring */}
-          <div className="absolute -inset-0.5 animate-[spin_8s_linear_infinite] rounded-full bg-conic from-accent via-transparent to-accent" />
+          <div className="absolute -inset-0.5 rounded-full motion-safe:animate-[spin_8s_linear_infinite] bg-conic from-accent via-transparent to-accent" />
 
           {/* 3. Photo */}
           <div className="absolute inset-0 overflow-hidden rounded-full border-4 border-background bg-foreground">
@@ -107,7 +108,7 @@ export default function About() {
                 <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-semibold">
                   <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-2.5 py-1">
                     <span className="relative flex size-2">
-                      <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-400 opacity-75" />
+                      <span className="absolute inline-flex size-full rounded-full motion-safe:animate-ping bg-green-400 opacity-75" />
                       <span className="relative inline-flex size-2 rounded-full bg-green-500" />
                     </span>
                     Currently enrolled
@@ -129,8 +130,17 @@ export default function About() {
         </div>
 
         {/* ---------- Tech Stack ---------- */}
-        <SubLabel right={`${stackTop.length + stackBottom.length} tools`}>TECH STACK</SubLabel>
-        <div className="stack-track flex flex-col gap-3 rounded-[22px] border border-line bg-surface py-5.5">
+        <SubLabel
+          right={
+            <>
+              {stackTop.length + stackBottom.length} tools
+              <MarqueeToggle targetId="tech-stack" />
+            </>
+          }
+        >
+          TECH STACK
+        </SubLabel>
+        <div id="tech-stack" className="stack-track flex flex-col gap-3 rounded-[22px] border border-line bg-surface py-5.5">
           <TechMarquee items={stackTop} />
           <TechMarquee items={stackBottom} reverse />
         </div>

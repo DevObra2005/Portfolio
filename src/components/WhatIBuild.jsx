@@ -1,7 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { Pause, Play } from "lucide-react";
 import { services } from "@/data/services";
+
+/* ---------- Reduced motion (sinusundan ang setting ng device) ---------- */
+const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
+
+function subscribeReduced(callback) {
+  const mq = window.matchMedia(REDUCED_QUERY);
+  mq.addEventListener("change", callback);
+  return () => mq.removeEventListener("change", callback);
+}
+
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(
+    subscribeReduced,
+    () => window.matchMedia(REDUCED_QUERY).matches,
+    () => false
+  );
+}
+
+/* ---------- Nakikita ba ang tab ng browser ---------- */
+function subscribeVisibility(callback) {
+  document.addEventListener("visibilitychange", callback);
+  return () => document.removeEventListener("visibilitychange", callback);
+}
+
+function usePageVisible() {
+  return useSyncExternalStore(
+    subscribeVisibility,
+    () => document.visibilityState === "visible",
+    () => true
+  );
+}
 
 /* ---------- Mga visual (isa bawat service) ---------- */
 
@@ -105,22 +137,79 @@ export default function WhatIBuild() {
 
   const DURATION = 4500; // 4.5s — dapat kapareho ng CSS (wib-progress)
 
-  // Orasan: tuwing magbabago ang active, gagawa ng bagong 4.5s timer
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setActive((current) => (current + 1) % services.length);
-    }, DURATION);
+  const cardRef = useRef(null);
+  const [hovered, setHovered] = useState(false);
+  const [keyboardFocus, setKeyboardFocus] = useState(false);
+  const [userPaused, setUserPaused] = useState(false);
+  const [onScreen, setOnScreen] = useState(true);
+  const reduced = usePrefersReducedMotion();
+  const pageVisible = usePageVisible();
 
-    return () => clearTimeout(timer); // cleanup: burahin ang lumang timer
+  // Umiikot lang kapag walang dahilan para huminto
+  const running = !reduced && !hovered && !keyboardFocus && !userPaused && onScreen && pageVisible;
+
+  // Huminto kapag wala sa screen
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => setOnScreen(entry.isIntersecting));
+    observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Natitirang oras ng kasalukuyang slide: bumabalik sa 4.5s tuwing lilipat
+  const remaining = useRef(DURATION);
+  useEffect(() => {
+    remaining.current = DURATION;
   }, [active]);
 
+  // Orasan: tumatakbo lang habang "running"; kapag huminto, tinatandaan kung ilan pa ang natitira
+  useEffect(() => {
+    if (!running) return;
+    const started = performance.now();
+    const timer = setTimeout(() => {
+      setActive((current) => (current + 1) % services.length);
+    }, remaining.current);
+
+    return () => {
+      clearTimeout(timer);
+      remaining.current = Math.max(0, remaining.current - (performance.now() - started));
+    };
+  }, [active, running]);
+
+  // Keyboard focus lang ang nagpapahinto (hindi ang click ng mouse, hover na ang bahala doon)
+  function handleFocus(e) {
+    if (e.target.matches(":focus-visible")) setKeyboardFocus(true);
+  }
+
+  function handleBlur(e) {
+    if (!e.currentTarget.contains(e.relatedTarget)) setKeyboardFocus(false);
+  }
+
   return (
-    <div className="wib-card w-full max-w-100 rounded-3xl border border-line bg-card p-4.5 shadow-[0_50px_90px_-60px_rgba(10,10,10,.45)]">
+    <div
+      ref={cardRef}
+      data-running={running}
+      data-onscreen={onScreen && pageVisible}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      className="wib-card w-full max-w-100 rounded-3xl border border-line bg-card p-4.5 shadow-[0_50px_90px_-60px_rgba(10,10,10,.45)]"
+    >
       {/* Header ng card */}
       <div className="mb-1 flex items-center justify-between px-0.5">
         <span className="font-mono text-xs tracking-[0.14em] text-muted">WHAT I BUILD</span>
-        <span className="font-mono text-xs text-dim">
+        <span className="flex items-center gap-2.5 font-mono text-xs text-dim">
           {String(active + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}
+          {!reduced && (
+            <button
+              type="button"
+              onClick={() => setUserPaused((p) => !p)}
+              aria-label={userPaused ? "Play slideshow" : "Pause slideshow"}
+              className="grid size-7 cursor-pointer place-items-center rounded-full border border-line text-muted transition-colors duration-150 hover:border-foreground hover:text-foreground"
+            >
+              {userPaused ? <Play size={12} /> : <Pause size={12} />}
+            </button>
+          )}
         </span>
       </div>
       {/* Progress bars */}
@@ -138,8 +227,9 @@ export default function WhatIBuild() {
           >
             <span className="block h-0.75 overflow-hidden rounded-full bg-line">
               {i < active && <span className="block h-full w-full bg-foreground" />}
+              {/* Under reduced motion: buo agad ang bar, walang takbo */}
               {i === active && (
-                <span className="wib-progress block h-full bg-accent" />
+                <span className={`block h-full w-full origin-left bg-accent ${reduced ? "" : "wib-progress"}`} />
               )}
             </span>
             <span className="mt-2 block">
@@ -161,7 +251,7 @@ export default function WhatIBuild() {
       <div key={service.id} className="wib-in">
         <div className="mt-3.5 flex items-baseline gap-2.5">
           <span className="font-mono text-xs text-accent">{String(active + 1).padStart(2, "0")}</span>
-          <h3 className="font-display text-xl font-extrabold tracking-tight">{service.title}</h3>
+          <p className="font-display text-xl font-extrabold tracking-tight">{service.title}</p>
           <span className="ml-auto rounded-full bg-surface px-2.5 py-1 font-mono text-[11px] text-muted">
             {service.tag}
           </span>

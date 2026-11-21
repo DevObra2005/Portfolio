@@ -7,33 +7,34 @@ import { email as myEmail } from "@/data/socials";
 const initialForm = { name: "", email: "", subject: "", message: "" };
 
 const labelClass = "mb-1.5 block text-[11px] tracking-[0.12em] text-dim uppercase";
-const inputClass = "w-full rounded-xl border border-line bg-background px-3.5 py-3 text-sm outline-none transition placeholder:text-dim focus:border-accent focus:ring-3 focus:ring-accent/15";
+// text-base sa phone: nagzo-zoom ang iOS Safari kapag mas maliit sa 16px ang input
+const inputClass = "w-full rounded-xl border border-line bg-background px-3.5 py-3 text-base sm:text-sm outline-none transition placeholder:text-dim focus:border-accent focus:ring-3 focus:ring-accent/15";
 
 export default function ContactForm() {
   const [form, setForm] = useState(initialForm);
-  const [opened, setOpened] = useState(null); // ← BAGO: null | "app" | "gmail"
+  const [opened, setOpened] = useState(null); // ← BAGO: null | "app" | "gmail" | "blocked"
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
+  const subject = form.subject.trim() || `Portfolio inquiry from ${form.name}`;
+  const body = `Hi Mark,\n\n${form.message}\n\n— ${form.name}\n${form.email}`;
+  const mailtoUrl =
+    `mailto:${myEmail}` +
+    `?subject=${encodeURIComponent(subject)}` +
+    `&body=${encodeURIComponent(body)}`;
+
   function handleSubmit(e) {
     e.preventDefault();
-
-    const subject = form.subject.trim() || `Portfolio inquiry from ${form.name}`;
-    const body = `Hi Mark,\n\n${form.message}\n\n— ${form.name}\n${form.email}`;
 
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent); // ← BAGO
 
     if (isMobile) {
       // ← BAGO: sa phone, buksan ang email app (Gmail app sa Android, Mail sa iPhone)
-      const mailtoUrl =
-        `mailto:${myEmail}` +
-        `?subject=${encodeURIComponent(subject)}` +
-        `&body=${encodeURIComponent(body)}`;
-
       window.location.href = mailtoUrl;
       setOpened("app");
+      setForm(initialForm);
     } else {
       // sa laptop, buksan ang Gmail sa bagong tab
       const gmailUrl =
@@ -42,11 +43,19 @@ export default function ContactForm() {
         `&su=${encodeURIComponent(subject)}` +
         `&body=${encodeURIComponent(body)}`;
 
-      window.open(gmailUrl, "_blank", "noopener,noreferrer");
-      setOpened("gmail");
-    }
+      // Walang "noopener" sa features para malaman kung na-block ang popup;
+      // pinuputol ang opener nang manual pagkatapos.
+      const tab = window.open(gmailUrl, "_blank");
 
-    setForm(initialForm);
+      if (tab) {
+        tab.opener = null;
+        setOpened("gmail");
+        setForm(initialForm);
+      } else {
+        // Na-block: huwag burahin ang mensahe, ipakita ang ibang paraan
+        setOpened("blocked");
+      }
+    }
   }
 
   return (
@@ -63,7 +72,9 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor="subject" className={labelClass}>Subject</label>
+        <label htmlFor="subject" className={labelClass}>
+          Subject <span className="normal-case tracking-normal">(optional)</span>
+        </label>
         <input id="subject" name="subject" value={form.subject} onChange={handleChange} placeholder="Project inquiry" className={inputClass} />
       </div>
 
@@ -80,7 +91,16 @@ export default function ContactForm() {
       </button>
 
       <p aria-live="polite" className="min-h-5 text-sm">
-        {opened && (
+        {opened === "blocked" && (
+          <span className="text-muted">
+            Your browser blocked the Gmail tab. Your message is still here.{" "}
+            <a href={mailtoUrl} className="font-semibold text-accent underline underline-offset-2">
+              Use your email app
+            </a>{" "}
+            or allow pop-ups and press Send again.
+          </span>
+        )}
+        {(opened === "app" || opened === "gmail") && (
           <span className="flex items-center gap-1.5 text-accent">
             <CircleCheck size={16} />
             {/* ← BAGO: ibang mensahe depende kung saan bumukas */}

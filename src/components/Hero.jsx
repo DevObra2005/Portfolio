@@ -24,7 +24,7 @@ export default function Hero() {
 
         <p className="mt-4 font-mono text-lg font-medium">
           <span className="text-accent">&gt;</span> Software Developer
-          <span className="animate-blink text-accent">_</span>
+          <span className="text-accent motion-safe:animate-blink">_</span>
         </p>
         <p className="mt-1 mb-5 text-sm font-medium text-muted">
           Web Applications · Mobile Applications
@@ -58,7 +58,7 @@ export default function Hero() {
               aria-label={label}
               target={href.startsWith("http") ? "_blank" : undefined}
               rel="noopener noreferrer"
-              className="grid size-10 place-items-center rounded-[10px] border border-line text-muted transition hover:-translate-y-0.5 hover:border-accent hover:bg-accent hover:text-white"
+              className="grid size-10 place-items-center rounded-[10px] border border-line text-muted transition hover:-translate-y-0.5 hover:border-accent hover:bg-accent hover:text-background"
             >
               <Icon size={16} />
             </a>

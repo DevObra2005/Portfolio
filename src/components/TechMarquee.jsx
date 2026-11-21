@@ -2,7 +2,7 @@ export default function TechMarquee({ items, reverse = false }) {
   const loop = [...items, ...items]; // dalawang kopya para walang putol
 
   return (
-    <div className="overflow-hidden py-1 [mask-image:linear-gradient(90deg,transparent,black_12%,black_88%,transparent)]">
+    <div className="stack-mask overflow-hidden py-1">
       <ul className={`stack-row flex w-max ${reverse ? "reverse" : ""}`}>
         {loop.map(({ name, icon: Icon, color, ai }, i) => (
           <li

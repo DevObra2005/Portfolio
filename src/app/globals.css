@@ -7,7 +7,7 @@
   --card: #ffffff;
   --foreground: #0a0a0a;
   --muted: #5a5a56;
-  --dim: #8a8a85;
+  --dim: #6b6b66;
   --line: #e2e2de;
   --line-strong: #c9c9c4;
   --accent: #5b4bff;
@@ -20,7 +20,7 @@
   --card: #111111;
   --foreground: #f5f5f2;
   --muted: #a3a3a0;
-  --dim: #6e6e6a;
+  --dim: #8a8a85;
   --line: #262626;
   --line-strong: #3a3a3a;
   --accent: #a99bff;
@@ -44,7 +44,7 @@
 
 @theme {
   --animate-float: float 2s ease-in-out infinite;
-  --animate-blink: blink 1s step-end infinite;
+  --animate-blink: blink 1s step-end 6; /* ilang kurap lang, tapos solid na */
   --animate-fade-up: fade-up 0.5s ease;
   --animate-marquee: marquee 40s linear infinite;
 
@@ -73,10 +73,31 @@ body {
   color: var(--foreground);
 }
 
+/* Theme switch: ang bagong theme ay kumakalat na bilog mula sa toggle (ThemeToggle.jsx).
+   Patayin ang default na crossfade para ang clip-path lang ang gumalaw. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
+/* Keyboard focus: one ring for every control, drawn from the accent */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
 
 
 /* ---------- What I Build (Hero card) ---------- */
-@keyframes wib-progress { from { width: 0; } to { width: 100%; } }
+@keyframes wib-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes wib-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @keyframes wib-build {
   0%, 8% { opacity: 0; transform: scale(.9); }
@@ -108,7 +129,8 @@ body {
 @keyframes wib-label-res { 0%, 52% { opacity: 0; } 58%, 90% { opacity: 1; } 96%, 100% { opacity: 0; } }
 
 .wib-progress { animation: wib-progress 4.5s linear forwards; }
-.wib-card:hover .wib-progress { animation-play-state: paused; }
+/* Kasabay ng timer sa WhatIBuild.jsx: huminto ang bar kapag huminto ang slideshow */
+.wib-card[data-running="false"] .wib-progress { animation-play-state: paused; }
 .wib-in { animation: wib-in .45s cubic-bezier(.2, .8, .2, 1); }
 .wib-build { opacity: 0; animation: wib-build 4.5s ease infinite; }
 .wib-cursor { animation: wib-cursor 4.5s ease infinite; }
@@ -117,6 +139,11 @@ body {
 .wib-res { animation: wib-res 4.5s ease-in-out infinite; }
 .wib-label-req { animation: wib-label-req 4.5s ease infinite; }
 .wib-label-res { animation: wib-label-res 4.5s ease infinite; }
+
+/* Wala sa screen o nakatagong tab: patigilin ang mga loop */
+.wib-card[data-onscreen="false"] :is(.wib-build, .wib-cursor, .wib-tap, .wib-req, .wib-res, .wib-label-req, .wib-label-res) {
+  animation-play-state: paused;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .wib-build, .wib-cursor, .wib-tap, .wib-req, .wib-res,
@@ -131,8 +158,23 @@ body {
 }
 .stack-row { animation: stack-scroll 32s linear infinite; }
 .stack-row.reverse { animation-direction: reverse; animation-duration: 36s; }
-.stack-track:hover .stack-row { animation-play-state: paused; }
+.stack-track:hover .stack-row,
+.stack-track[data-paused="true"] .stack-row,
+.stack-track[data-onscreen="false"] .stack-row { animation-play-state: paused; }
 
+.stack-mask { mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent); }
+
+/* Reduced motion: walang takbo, kaya ipakita lahat ng tools na naka-wrap sa halip na putol */
 @media (prefers-reduced-motion: reduce) {
-  .stack-row { animation: none; }
+  .stack-mask { mask-image: none; }
+  .stack-row {
+    animation: none;
+    width: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 0.75rem;
+    padding-inline: 1rem;
+  }
+  .stack-row > li { margin-inline: 0.375rem; }
+  .stack-row > [aria-hidden="true"] { display: none; }
 }

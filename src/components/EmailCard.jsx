@@ -1,16 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, Copy, Mail } from "lucide-react";
 
 export default function EmailCard({ email }) {
   const [copied, setCopied] = useState(false);
+  const timer = useRef(null);
+
+  useEffect(() => () => clearTimeout(timer.current), []);
 
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(email);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      clearTimeout(timer.current);
+      timer.current = setTimeout(() => setCopied(false), 2000);
     } catch {
       window.location.href = `mailto:${email}`;
     }
@@ -43,6 +47,10 @@ export default function EmailCard({ email }) {
           </>
         )}
       </button>
+
+      <span aria-live="polite" className="sr-only">
+        {copied ? "Email address copied" : ""}
+      </span>
     </div>
   );
 }
