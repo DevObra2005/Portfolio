@@ -8,7 +8,7 @@ export const projects = [
     badge: "Capstone Project",
     icon: Flame,
     desc: "Android fire-safety training simulation. Trainees go through all eight TPASS steps, and a Laravel backend records their scores.",
-    tags: ["Unity", "C#", "Laravel", "Blender"],
+    tags: ["Unity", "Laravel", "React", "Blender"],
     live: "https://bfpfireops.com",
     download: "https://bfpfireops.com/download",
     image: fireopsImg,

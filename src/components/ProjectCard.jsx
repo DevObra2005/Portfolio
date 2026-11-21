@@ -2,9 +2,8 @@ import Image from "next/image";
 import { ArrowUpRight, Download } from "lucide-react";
 import { FaGithub } from "react-icons/fa6";
 
-export default function ProjectCard({ project, index }) {
+export default function ProjectCard({ project }) {
   const { title, badge, icon: Icon, desc, tags, repo, live, download, image } = project;
-  const number = String(index + 1).padStart(2, "0");
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-card transition duration-300 hover:-translate-y-1.5 hover:border-accent hover:shadow-xl">
@@ -15,18 +14,14 @@ export default function ProjectCard({ project, index }) {
         }`}
       >
         {image ? (
-          <>
-            <Image
-              src={image}
-              alt={`${title} preview`}
-              fill
-              sizes="(min-width: 640px) 384px, 100vw"
-              placeholder="blur"
-              className="object-cover transition duration-500 group-hover:scale-105"
-            />
-            {/* Dilim sa ibaba para mabasa ang numero */}
-            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black/45 to-transparent" />
-          </>
+          <Image
+            src={image}
+            alt={`${title} preview`}
+            fill
+            sizes="(min-width: 640px) 384px, 100vw"
+            placeholder="blur"
+            className="object-cover transition duration-500 group-hover:scale-105"
+          />
         ) : (
           <>
             <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent_0_14px,currentColor_14px_15px)] opacity-10" />
@@ -40,14 +35,6 @@ export default function ProjectCard({ project, index }) {
 
         <span className="absolute top-3 left-3 rounded-md bg-background px-2 py-1 font-mono text-[10px] tracking-wider text-foreground uppercase">
           {badge}
-        </span>
-
-        <span
-          className={`absolute right-4 bottom-2 font-display text-5xl font-extrabold ${
-            image ? "text-white/70" : "opacity-20"
-          }`}
-        >
-          {number}
         </span>
       </div>
 

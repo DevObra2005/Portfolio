@@ -30,25 +30,35 @@ export default function About() {
         <div>
           <p className="font-mono text-[13px] text-dim">A bit about me</p>
           <h3 className="mt-1 mb-4 font-display text-[clamp(26px,3.6vw,34px)] leading-tight font-bold">
-            I build systems that turn repetitive tasks into automated solutions.
+            Curious by nature. Builder by choice.
           </h3>
           <p className="mb-3 text-[15px] text-muted">
-            I&apos;m in my final year of BS Information Technology at UCU. What started with HTML and
-            C++ in 2023 grew into building full systems — the kind where the database, the backend
-            and the screen all have to make sense together.
+            I&apos;m a BS Information Technology student from Pangasinan who enjoys turning ideas
+            into things people can actually use. I get curious about how things work, and once I
+            start building something, I keep going until it works, even if it means trying,
+            breaking and fixing it more than once.
+          </p>
+          <p className="mb-3 text-[15px] text-muted">
+            I learn best by doing. Every new tool starts as a small experiment and slowly becomes
+            part of how I work. I use AI tools like Claude and ChatGPT not just to move faster, but
+            to understand the &quot;why&quot; behind the code, so I can read it, change it and own it. I
+            care about clean, simple interfaces, because a good system should feel easy for the
+            person using it.
           </p>
           <p className="mb-6 text-[15px] text-muted">
-            My capstone, FireOps, pushed me past the browser into Unity, C# and Blender: a fire-safety
-            training simulation for Android that reports scores to a Laravel API. It taught me the part
-            I enjoy most — picking up a new tool fast when the problem calls for it.
+            What drives me most is seeing something I built solve a real problem for someone. I&apos;m
+            always looking for chances to grow, work with others and learn from people who know more
+            than I do. Right now, I&apos;m looking for my first real-world experience where I can
+            contribute, keep improving and become a better developer every day.
           </p>
 
           <div className="flex flex-wrap gap-2.5">
             <a
-              href="#"
+              href="/obra_resume.pdf"
+              download="Mark_Joemarie_Obra_Resume.pdf"
               className="inline-flex min-h-11.5 items-center gap-2 rounded-xl border border-foreground bg-foreground px-5 text-sm font-semibold text-background transition hover:-translate-y-0.5"
             >
-              <Download size={16} /> Download CV
+              <Download size={16} /> Resume
             </a>
             <a
               href="#projects"
