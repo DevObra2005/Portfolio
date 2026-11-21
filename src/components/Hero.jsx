@@ -22,15 +22,10 @@ export default function Hero() {
           <span className="block text-muted">Obra</span>
         </h1>
 
-        <p className="mt-4 font-mono text-lg font-medium">
-          <span className="text-accent">&gt;</span> Software Developer
-          <span className="text-accent motion-safe:animate-blink">_</span>
+        <p className="mt-6 font-display text-[clamp(20px,2.4vw,26px)] leading-tight font-semibold tracking-tight">
+          Software Developer
         </p>
-        <p className="mt-1 mb-5 text-sm font-medium text-muted">
-          Web Applications · Mobile Applications
-        </p>
-
-        <p className="mb-7 max-w-[520px] text-[15px] text-muted">
+        <p className="mt-3 mb-7 max-w-[520px] text-[15px] text-muted">
           I&apos;m an IT student who builds full-stack web applications with Laravel and React,
           with hands-on experience in Android development.
         </p>
@@ -46,7 +41,7 @@ export default function Hero() {
             href="#contact"
             className="inline-flex min-h-[46px] items-center gap-2 rounded-xl border border-foreground px-5 text-sm font-semibold transition hover:bg-foreground hover:text-background"
           >
-            Let's Talk <Mail size={16} />
+            Let&apos;s Talk <Mail size={16} />
           </a>
         </div>
 

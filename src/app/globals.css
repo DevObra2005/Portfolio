@@ -44,7 +44,6 @@
 
 @theme {
   --animate-float: float 2s ease-in-out infinite;
-  --animate-blink: blink 1s step-end 6; /* ilang kurap lang, tapos solid na */
   --animate-fade-up: fade-up 0.5s ease;
   --animate-marquee: marquee 40s linear infinite;
 
@@ -56,10 +55,6 @@
   @keyframes float {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
-  }
-
-  @keyframes blink {
-    50% { opacity: 0; }
   }
 
     @keyframes marquee {
